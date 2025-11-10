@@ -22,7 +22,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.androidapplication.ui.container.NavGraph
 import com.example.androidapplication.ui.theme.PrimaryYellowDark
 import com.example.androidapplication.ui.theme.PrimaryYellowLight
-
+@OptIn(ExperimentalMaterial3Api::class) // ✅ explicitly opt-in instead of warning
 @Composable
 fun VerifyOtpScreen(
     navHost: NavController
@@ -78,7 +78,14 @@ fun VerifyOtpScreen(
                             .height(60.dp)
                             .background(Color.White, shape = RoundedCornerShape(12.dp)),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        shape = RoundedCornerShape(12.dp)
+                        shape = RoundedCornerShape(12.dp),
+                                colors = TextFieldDefaults.outlinedTextFieldColors(
+                                    focusedTextColor = Color.Black, // ✅ replaced 'textColor'
+                        focusedBorderColor = PrimaryYellowDark,
+                        unfocusedBorderColor = Color.Gray,
+                        cursorColor = PrimaryYellowDark
+                    )
+
                     )
                 }
             }

@@ -14,25 +14,17 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
-import com.airbnb.lottie.compose.LottieAnimation
-import com.airbnb.lottie.compose.LottieCompositionSpec
-import com.airbnb.lottie.compose.LottieConstants
-import com.airbnb.lottie.compose.rememberLottieAnimatable
-import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.androidapplication.ui.theme.PrimaryYellowDark
 import com.example.androidapplication.ui.theme.PrimaryYellowLight
-import com.example.androidapplication.R
+import com.example.androidapplication.ui.container.NavGraph
 import androidx.compose.ui.focus.onFocusChanged
 
-import androidx.compose.ui.unit.dp
-import com.airbnb.lottie.compose.*
 @Composable
 fun ResetPasswordScreen(
     navHost: NavController,
@@ -43,18 +35,7 @@ fun ResetPasswordScreen(
 
     var newPassword by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
-
-    // Track focus for animations
     var isFocused by remember { mutableStateOf(false) }
-
-    // Load Lottie animations
-    val lottieComp1 by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.visibility))
-    val lottieComp2 by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.visibility))
-    val lottieAnim1 = rememberLottieAnimatable()
-    val lottieAnim2 = rememberLottieAnimatable()
-
-    LaunchedEffect(lottieComp1) { lottieAnim1.animate(lottieComp1, iterations = LottieConstants.IterateForever) }
-    LaunchedEffect(lottieComp2) { lottieAnim2.animate(lottieComp2, iterations = LottieConstants.IterateForever) }
 
     Box(
         modifier = Modifier
@@ -87,26 +68,6 @@ fun ResetPasswordScreen(
             )
 
             Spacer(modifier = Modifier.height(24.dp))
-
-            // Show animations when focused
-            if (isFocused) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    LottieAnimation(
-                        composition = lottieComp1,
-                        progress = { lottieAnim1.progress },
-                        modifier = Modifier.size(80.dp)
-                    )
-                    LottieAnimation(
-                        composition = lottieComp2,
-                        progress = { lottieAnim2.progress },
-                        modifier = Modifier.size(80.dp)
-                    )
-                }
-                Spacer(modifier = Modifier.height(16.dp))
-            }
 
             // New Password TextField
             BasicTextField(
@@ -155,12 +116,17 @@ fun ResetPasswordScreen(
                         Toast.makeText(context, "Passwords do not match", Toast.LENGTH_SHORT).show()
                         return@Button
                     }
+
                     viewModel.resetPassword(
                         newPassword = newPassword,
                         resetToken = resetToken,
                         onSuccess = { message ->
                             Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-                            navHost.navigate("login") { popUpTo(0) }
+
+                            // Navigate to Login screen and clear backstack
+                            navHost.navigate(NavGraph.Login.route) {
+                                popUpTo(0)
+                            }
                         },
                         onError = { error ->
                             Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
@@ -180,7 +146,7 @@ fun ResetPasswordScreen(
             Spacer(modifier = Modifier.height(8.dp))
 
             TextButton(
-                onClick = { navHost.navigate("login") },
+                onClick = { navHost.navigate(NavGraph.Login.route) },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(text = "Back to Login", color = Color.Black)
