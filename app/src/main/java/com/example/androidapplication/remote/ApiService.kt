@@ -29,7 +29,7 @@ interface ApiService {
     @POST("signup") // Ensure this matches your backend's endpoint
     suspend fun registerUser(@Body request: RegisterRequest): RegisterResponse
 
-    @POST("login") // Replace with your actual endpoint for login
+    @POST("login")
     suspend fun loginUser(@Body request: LoginRequest): LoginResponse
     @GET("profile")
     suspend fun getUserProfile(@Header("Authorization") token: String): Response<UserDataResponse>

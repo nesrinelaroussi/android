@@ -6,7 +6,9 @@ data class LoginRequest(
 )
 
 data class LoginResponse(
-    val status: String,
-    val message: String,
-    val accessToken: String // Rename this to match your backend response
+    val accessToken: String,
+    val refreshToken: String,
+    val userId: String,
+    val userName: String,
+    val userEmail: String
 )

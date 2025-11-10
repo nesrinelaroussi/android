@@ -1,4 +1,6 @@
 package com.example.androidapplication.models.register
+
+
 data class RegisterRequest(
     val name: String,
     val email: String,
@@ -6,8 +8,12 @@ data class RegisterRequest(
 )
 
 data class RegisterResponse(
-    val name: String,
-    val email: String,
-    val _id: String // Backend likely returns the MongoDB user ID
+    val data: UserData,
+    val message: String
 )
 
+data class UserData(
+    val _id: String,
+    val name: String,
+    val email: String
+)

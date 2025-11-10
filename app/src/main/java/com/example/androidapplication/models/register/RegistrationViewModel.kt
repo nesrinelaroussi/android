@@ -19,14 +19,17 @@ class RegistrationViewModel : ViewModel() {
         viewModelScope.launch {
             _registrationState.value = RegistrationState.Loading
             try {
-                val response = RetrofitClient.instance.registerUser(RegisterRequest(name, email, password))
+                // Call backend
+                val response: RegisterResponse =
+                    RetrofitClient.instance.registerUser(RegisterRequest(name, email, password))
+
                 Log.d("RegistrationViewModel", "Backend Response: $response")
 
                 // Check if the response contains a valid user ID
-                if (!response._id.isNullOrEmpty()) {
+                if (!response.data._id.isNullOrEmpty()) {
                     _registrationState.value =
-                        RegistrationState.Success("User registered successfully!")
-                    onSuccess() // Call the success callback
+                        RegistrationState.Success(response.message)
+                    onSuccess() // Navigate to login
                 } else {
                     _registrationState.value =
                         RegistrationState.Error("Registration failed: Invalid response")
@@ -39,7 +42,7 @@ class RegistrationViewModel : ViewModel() {
     }
 }
 
-
+// Sealed class remains the same
 sealed class RegistrationState {
     object Idle : RegistrationState()
     object Loading : RegistrationState()

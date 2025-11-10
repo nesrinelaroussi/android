@@ -34,8 +34,8 @@ fun RegistrationScreen(
 
     // ViewModel
     val viewModel = remember { RegistrationViewModel() }
+    val context = LocalContext.current
     val registrationState by viewModel.registrationState.collectAsState()
-
     Box(
         modifier = modifier
             .fillMaxSize()

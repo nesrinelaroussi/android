@@ -33,18 +33,19 @@ fun LoginScreen(
     val viewModel = remember { LoginViewModel() }
     val context = LocalContext.current
     val loginState by viewModel.loginState.collectAsState()
-
-    // Handle login state (same logic as before)
-    when (loginState) {
-        is LoginState.Loading -> CircularProgressIndicator()
-        is LoginState.Success -> {
-            Toast.makeText(context, (loginState as LoginState.Success).message, Toast.LENGTH_SHORT).show()
-            onLoginClicked()
+// Handle side-effects safely
+    LaunchedEffect(loginState) {
+        when (loginState) {
+            is LoginState.Success -> {
+                Toast.makeText(context, (loginState as LoginState.Success).message, Toast.LENGTH_SHORT).show()
+                onLoginClicked()
+            }
+            is LoginState.Error -> {
+                Toast.makeText(context, (loginState as LoginState.Error).error, Toast.LENGTH_SHORT).show()
+            }
+            else -> {}
         }
-        is LoginState.Error -> Toast.makeText(context, (loginState as LoginState.Error).error, Toast.LENGTH_SHORT).show()
-        else -> Unit
     }
-
     Box(
         modifier = modifier
             .fillMaxSize()
