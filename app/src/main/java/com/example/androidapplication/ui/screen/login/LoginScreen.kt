@@ -95,76 +95,96 @@ fun LoginScreen(
 
             var email by remember { mutableStateOf("") }
             var password by remember { mutableStateOf("") }
+            Column(modifier = Modifier.fillMaxWidth()) {
 
-            // Email Field
-            BasicTextField(
-                value = email,
-                onValueChange = { email = it },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-                    .background(Color.White),
-                singleLine = true,
-                decorationBox = { innerTextField ->
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp)
-                    ) {
-                        if (email.isEmpty()) {
-                            Text(text = "Your email", color = Color.Gray)
+                // Email Field
+                BasicTextField(
+                    value = email,
+                    onValueChange = { email = it },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
+                        .background(Color.White),
+                    singleLine = true,
+                    decorationBox = { innerTextField ->
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp)
+                        ) {
+                            if (email.isEmpty()) {
+                                Text(text = "Your email", color = Color.Gray)
+                            }
+                            innerTextField()
                         }
-                        innerTextField()
                     }
-                }
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-
-            // Password Field
-            BasicTextField(
-                value = password,
-                onValueChange = { password = it },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-                    .background(Color.White),
-                visualTransformation = PasswordVisualTransformation(),
-                singleLine = true,
-                decorationBox = { innerTextField ->
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp)
-                    ) {
-                        if (password.isEmpty()) {
-                            Text(text = "Password", color = Color.Gray)
-                        }
-                        innerTextField()
-                    }
-                }
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Forgot Password
-            TextButton(
-                onClick = onForgotPasswordClicked,
-                modifier = Modifier.align(Alignment.End)
-            ) {
-                Text("Forgot Password?", color = Color.Black)
-            }
-
-            // Login Button
-            Button(
-                onClick = { viewModel.loginUser(email, password, context) },
-                modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = PrimaryYellowDark,
-                    contentColor = Color.White
                 )
-            ) {
-                Text("Login")
-            }
+                Spacer(modifier = Modifier.height(8.dp))
 
+                // Password Field
+                BasicTextField(
+                    value = password,
+                    onValueChange = { password = it },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
+                        .background(Color.White),
+                    visualTransformation = PasswordVisualTransformation(),
+                    singleLine = true,
+                    decorationBox = { innerTextField ->
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp)
+                        ) {
+                            if (password.isEmpty()) {
+                                Text(text = "Password", color = Color.Gray)
+                            }
+                            innerTextField()
+                        }
+                    }
+                )
+                var rememberMe by remember { mutableStateOf(false) }
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(vertical = 8.dp)
+                ) {
+                    Checkbox(
+                        checked = rememberMe,
+                        onCheckedChange = { rememberMe = it },
+                        colors = CheckboxDefaults.colors(
+                            checkedColor = PrimaryYellowDark,
+                            uncheckedColor = Color.Gray
+                        )
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(text = "Remember Me", color = Color.Black)
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Forgot Password
+                TextButton(
+                    onClick = onForgotPasswordClicked,
+                    modifier = Modifier.align(Alignment.End)
+                ) {
+                    Text("Forgot Password?", color = Color.Black)
+                }
+
+
+                // Login Button
+                Button(
+                    onClick = { viewModel.loginUser(email, password, context, rememberMe) },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = PrimaryYellowDark,
+                        contentColor = Color.White
+                    )
+                ) {
+                    Text("Login")
+                }
+
+            }
             Spacer(modifier = Modifier.height(8.dp))
 
             // Register Button

@@ -2,7 +2,9 @@ package com.example.androidapplication.models.login
 
 data class LoginRequest(
     val email: String,
-    val password: String
+    val password: String,
+    val rememberMe: Boolean
+
 )
 
 data class LoginResponse(

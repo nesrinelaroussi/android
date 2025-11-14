@@ -11,6 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -18,40 +19,49 @@ import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.androidapplication.R
+import com.example.androidapplication.models.login.getSavedTokens
 import com.example.androidapplication.ui.components.ActionButton
 import com.example.androidapplication.ui.theme.*
 
 @Composable
 fun WelcomeScreen(
-    modifier: Modifier = Modifier,
-    onOpenLoginClicked: () -> Unit
+    onOpenLoginClicked: () -> Unit,
+    onAutoLogin: () -> Unit
 ) {
-    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.pencil))
+    val context = LocalContext.current
+    var navigateTo by remember { mutableStateOf<(() -> Unit)?>(null) }
 
-    // State to control Lottie's horizontal position
+    LaunchedEffect(Unit) {
+        val (_, refreshToken) = getSavedTokens(context)
+        navigateTo = if (!refreshToken.isNullOrEmpty()) {
+            onAutoLogin // Go directly to HomeScreen
+        } else {
+            onOpenLoginClicked // Go to LoginScreen
+        }
+    }
+
+    // Your Lottie + UI animation code remains the same
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.pencil))
     var animationOffset by remember { mutableStateOf(-300.dp) }
     val animatedOffset by androidx.compose.animation.core.animateDpAsState(
         targetValue = animationOffset,
-        animationSpec = tween(durationMillis = 7500) // Adjust duration as needed
+        animationSpec = tween(durationMillis = 7500)
     )
-
-    // States for controlling visibility
     var isTitleVisible by remember { mutableStateOf(false) }
     var isButtonVisible by remember { mutableStateOf(false) }
 
-    // Trigger animations
     LaunchedEffect(Unit) {
-        isTitleVisible = true // Make the title visible with animation
-        animationOffset = 0.dp // Move the Lottie animation to the center
-        isButtonVisible = true // Show the button when the Lottie starts
+        isTitleVisible = true
+        animationOffset = 0.dp
+        isButtonVisible = true
     }
 
     Column(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
             .background(
                 Brush.verticalGradient(
-                    0f to PrimaryYellowDark ,
+                    0f to PrimaryYellowDark,
                     0.6f to PrimaryYellowLight,
                     1f to PrimaryYellowLight,
                 )
@@ -59,55 +69,39 @@ fun WelcomeScreen(
             .systemBarsPadding(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(
-            modifier = Modifier.height(54.dp) // Add space before the title
-        )
-        // Animated visibility for the title
+        Spacer(modifier = Modifier.height(54.dp))
         AnimatedVisibility(
             visible = isTitleVisible,
-            enter = fadeIn(animationSpec = tween(2000)), // Fade in over 2 seconds
-            exit = fadeOut(animationSpec = tween(1000))
+            enter = fadeIn(animationSpec = tween(2000))
         ) {
             Text(
                 text = "Create art with ease!",
                 style = MaterialTheme.typography.headlineLarge,
                 fontWeight = FontWeight.Black,
-                modifier = Modifier.padding(horizontal = 21.dp),
                 color = DarkTextColor
             )
         }
 
-        Spacer(
-            modifier = Modifier.height(16.dp)
-        )
+        Spacer(modifier = Modifier.weight(1f))
 
-        Spacer(
-            modifier = Modifier.weight(weight = 1f)
-        )
-
-        // LottieAnimation with offset animation
         LottieAnimation(
             composition = composition,
-            iterations = Int.MAX_VALUE, // Loop animation indefinitely
+            iterations = Int.MAX_VALUE,
             modifier = Modifier
-                .size(300.dp) // Set Lottie size
-                .offset(x = animatedOffset) // Animate horizontal movement
+                .size(300.dp)
+                .offset(x = animatedOffset)
         )
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Animated visibility for the button
         AnimatedVisibility(
             visible = isButtonVisible,
-            enter = slideInVertically(
-                animationSpec = tween(2500),
-                initialOffsetY = { it } // Start from below the screen
-            )
+            enter = slideInVertically(animationSpec = tween(2500), initialOffsetY = { it })
         ) {
             ActionButton(
                 text = "Next",
                 isNavigationArrowVisible = true,
-                onClicked = onOpenLoginClicked,
+                onClicked = { navigateTo?.invoke() }, // Navigate based on token
                 colors = ButtonDefaults.buttonColors(
                     containerColor = PrimaryYellowDark,
                     contentColor = PrimaryYellowLight
@@ -116,9 +110,4 @@ fun WelcomeScreen(
             )
         }
     }
-}@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun WelcomeScreenPreview() {
-    WelcomeScreen(onOpenLoginClicked = {})
 }
-
