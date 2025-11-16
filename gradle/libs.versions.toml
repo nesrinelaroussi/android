@@ -13,6 +13,7 @@ lottie = "5.2.0"
 media3-exoplayer = "1.5.1"
 media3-ui = "1.5.1"
 foundation = "1.9.4"
+foundation-layout = "1.9.4"
 
 [libraries]
 androidx-core = { group = "androidx.core", name = "core-ktx", version.ref = "androidx-core" }
@@ -35,6 +36,7 @@ lottie-compose = { group = "com.airbnb.android", name = "lottie-compose", versio
 androidx-media3-exoplayer = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "media3-exoplayer" }
 androidx-media3-ui = { group = "androidx.media3", name = "media3-ui", version.ref = "media3-ui" }
 androidx-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "foundation" }
+androidx-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout", version.ref = "foundation-layout" }
 
 [bundles]
 androidX = ["androidx-core", "androidx-lifecycle"]

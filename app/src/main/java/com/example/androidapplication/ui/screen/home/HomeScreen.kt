@@ -7,6 +7,10 @@ import androidx.compose.foundation.layout.*
 
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,46 +36,70 @@ import com.example.androidapplication.models.logout.LogoutState
 import com.example.androidapplication.models.logout.LogoutViewModel
 import com.example.androidapplication.models.logout.clearTokens
 import com.example.androidapplication.remote.RetrofitClient
-import com.example.androidapplication.ui.theme.*
 import com.example.androidapplication.ui.container.NavGraph
-
 @Composable
-fun HomeScreen(navController: NavController) {val context = LocalContext.current
+fun HomeScreen(navController: NavController) {
+    val context = LocalContext.current
     val viewModel = remember { LogoutViewModel() }
     val logoutState by viewModel.logoutState.collectAsState()
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xFFF7F8FB))
-    ) {
-        Spacer(modifier = Modifier.height(20.dp))
-        Text("HI☻")
 
-        Spacer(modifier = Modifier.height(30.dp))
+    Scaffold(
+        containerColor = Color(0xFFF7F8FB),
 
-        Spacer(modifier = Modifier.height(20.dp))
-        val context = LocalContext.current
+        bottomBar = {
+            NavigationBar {
+                NavigationBarItem(
+                    selected = true,
+                    onClick = { /* Already here */ },
+                    icon = { Icon(painterResource(id = android.R.drawable.ic_menu_view), "") },
+                    label = { Text("Home") }
+                )
 
-        Button(onClick = {
-            val refreshToken = getRefreshToken(context)
-            if (refreshToken != null) {
-                viewModel.logout(refreshToken, context)
+                NavigationBarItem(
+                    selected = false,
+                    onClick = { navController.navigate("profile") },
+                    icon = { Icon(painterResource(id = android.R.drawable.ic_menu_myplaces), "") },
+                    label = { Text("Profile") }
+                )
+
+                NavigationBarItem(
+                    selected = false,
+                    onClick = { navController.navigate(NavGraph.ArtistList.route) },
+                    icon = { Icon(painterResource(id = android.R.drawable.ic_menu_manage), "") },
+                    label = { Text("Settings") }
+                )
             }
-        }) {
-            Text("Logout")
         }
+    ) { paddingValues ->
 
-        LaunchedEffect(logoutState) {
-            if (logoutState is LogoutState.Success) {
-                navController.navigate(NavGraph.Login.route) {
-                    popUpTo(0)
+        Column(
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize()
+        ) {
+            Spacer(modifier = Modifier.height(20.dp))
+            Text("HI☻")
+
+            Spacer(modifier = Modifier.height(30.dp))
+
+            Button(onClick = {
+                val refreshToken = getRefreshToken(context)
+                if (refreshToken != null) {
+                    viewModel.logout(refreshToken, context)
+                }
+            }) {
+                Text("Logout")
+            }
+
+            LaunchedEffect(logoutState) {
+                if (logoutState is LogoutState.Success) {
+                    navController.navigate(NavGraph.Login.route) {
+                        popUpTo(0)
+                    }
                 }
             }
         }
-
-        Spacer(modifier = Modifier.height(40.dp))
-
-        }
+    }
 }
 
 

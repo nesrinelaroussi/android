@@ -8,6 +8,7 @@ import com.example.androidapplication.models.login.LoginRequest
 import com.example.androidapplication.models.login.LoginResponse
 import com.example.androidapplication.models.register.RegisterResponse
 import com.example.androidapplication.models.UserDataResponse
+import com.example.androidapplication.models.artiste.ArtistListResponse
 import com.example.androidapplication.models.logout.LogoutRequest
 import com.example.androidapplication.models.logout.LogoutResponse
 import retrofit2.Response
@@ -18,6 +19,7 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.PUT
+import retrofit2.http.Query
 
 data class RegisterRequest(
     val name: String,
@@ -44,7 +46,8 @@ interface ApiService {
 
     @POST("verify-otp")
     suspend fun verifyOtp(@Body request: VerifyOtpRequest): VerifyOtpResponse
-
+    @GET("artists")
+    suspend fun getArtists(@Query("theme") theme: String): ArtistListResponse
 }
 
 object RetrofitClient {

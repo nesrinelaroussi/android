@@ -57,7 +57,8 @@ dependencies {
     implementation(libs.lottie.compose)
     implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0") // Add this line
     implementation ("com.google.android.gms:play-services-auth:20.7.0")
-
+    implementation("io.coil-kt:coil-compose:2.5.0")
+// Or the latest stable version
     // AndroidX
     implementation(libs.bundles.androidX)
     implementation("androidx.core:core-ktx:1.12.0")
@@ -72,8 +73,9 @@ dependencies {
     //TODO 2 Add ROOM dependencies here
     implementation("androidx.room:room-runtime:2.5.2")
     annotationProcessor("androidx.room:room-compiler:2.5.2")
-
+    implementation(platform("androidx.compose:compose-bom:2024.06.00")) // Utilisez votre version de la BOM
     implementation ("androidx.compose.material:material-icons-extended:<version>")
+    implementation ("androidx.compose.ui:ui-text") // <-- THIS IS CRUCIAL FOR KeyboardOptions
 
     implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.0")
     implementation ("androidx.compose.runtime:runtime-livedata:1.5.0") // Ensure this is added for observeAsState

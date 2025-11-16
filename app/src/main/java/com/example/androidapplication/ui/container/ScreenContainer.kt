@@ -3,31 +3,37 @@ package com.example.androidapplication.ui.container
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
-
+import androidx.navigation.NavType
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.androidapplication.models.login.getSavedTokens
-import com.example.androidapplication.models.login.saveTokenToPreferences
+import com.example.androidapplication.ui.artiste.ArtistDetailScreen
+import com.example.androidapplication.ui.artiste.ArtistListScreen
 import com.example.androidapplication.ui.screen.forgotpassword.ForgotPasswordScreen
 import com.example.androidapplication.ui.screen.forgotpassword.VerifyOtpScreen
 import com.example.androidapplication.ui.screen.home.HomeScreen
 import com.example.androidapplication.ui.screen.login.LoginScreen
-import com.example.androidapplication.ui.screen.registration.RegistrationScreen
 import com.example.androidapplication.ui.screen.welcome.WelcomeScreen
 import com.example.androidapplication.ui.screen.profile.ProfileScreen  // Import ProfileScreen
 import com.example.androidapplication.ui.screen.profile.EditProfileScreen  // Import ProfileScreen
 import com.example.androidapplication.ui.screen.resetpassword.ResetPasswordScreen
+import com.example.androidapplication.models.artiste.ArtistViewModel
+import java.net.URLDecoder
+
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ScreenContainer() {
     val navHost = rememberNavController()
     val context = LocalContext.current
+    val artistViewModel: ArtistViewModel = viewModel()
 
     val (accessToken, refreshToken) = getSavedTokens(context)
     val startDestination = if (!refreshToken.isNullOrEmpty()) {
-        NavGraph.Home.route
+        NavGraph.ArtistList.route
     } else {
         NavGraph.Welcome.route
     }
@@ -100,7 +106,38 @@ fun ScreenContainer() {
             ResetPasswordScreen(navHost = navHost, resetToken = resetToken)
         }
 
-    }}
+        composable(NavGraph.ArtistList.route) {
+            // Pass the ViewModel instance to the ArtistListScreen
+            ArtistListScreen(navController = navHost, artistViewModel = artistViewModel)
+        }
+
+        composable(
+            route = "artistDetail/{artistName}/{styleDescription}/{country}/{famousWorks}",
+            arguments = listOf(
+                navArgument("artistName") { type = NavType.StringType },
+                navArgument("styleDescription") { type = NavType.StringType },
+                navArgument("country") { type = NavType.StringType },
+                navArgument("famousWorks") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            // Retrieve arguments from the backStackEntry
+            val artistName = URLDecoder.decode(backStackEntry.arguments?.getString("artistName") ?: "", "UTF-8")
+            val styleDescription = URLDecoder.decode(backStackEntry.arguments?.getString("styleDescription") ?: "", "UTF-8")
+            val country = URLDecoder.decode(backStackEntry.arguments?.getString("country") ?: "", "UTF-8")
+            val famousWorks = URLDecoder.decode(backStackEntry.arguments?.getString("famousWorks") ?: "", "UTF-8")
+
+
+            ArtistDetailScreen(
+                navController = navHost,
+                artistName = artistName,
+                styleDescription = styleDescription,
+                country = country,
+                famousWorks = famousWorks
+            )
+        }
+    }
+
+}
 
 
 

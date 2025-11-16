@@ -13,8 +13,9 @@ sealed class NavGraph(val route: String) {
 
     data object VerifyOtp: NavGraph(route = "VerifyOtp")
 
+    data object ArtistList: NavGraph(route = "meal_screen")
 
-    data object Meal: NavGraph(route = "meal_screen")
+    data object ArtistDetail: NavGraph(route = "ArtistDetail")
 
 
 }
